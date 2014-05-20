@@ -6,7 +6,7 @@
 /*   By: gpetrov <gpetrov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/13 18:17:46 by gpetrov           #+#    #+#             */
-/*   Updated: 2014/05/17 23:45:44 by gpetrov          ###   ########.fr       */
+/*   Updated: 2014/05/20 14:00:56 by gpetrov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,55 +48,37 @@ int		create_client(char *addr, int port)
 	return (sock);	
 }
 
-void	dl_file(int sock, char *file, int t)
+void	write_server(int sock, char *name)
 {
-	(void)sock;
-	(void)t;
-	ft_putstr("attention\n");
-	open(file, O_RDWR, O_CREAT, O_EXCL);
+	if (send(sock, name, ft_strlen(name), 0) < 0)
+	{
+		ft_putstr("\033[31msend() error\033[0m\n");
+		exit(0);
+	}
 }
 
-void	put(int sock, char *file)
-{	
-	int		ret;
-	char	buf[1024];
-	int		t;
+int		read_server(int sock, char *buf)
+{
+	int		r;
 
-	ft_putstr(file);
-	write(sock, file, ft_strlen(file));
-	if ((ret = open(file, O_RDONLY)) < 0)
+	if ((r = recv(sock, buf, BUF_SIZE - 1, 0)) < 0)
 	{
-		ft_putstr("\033[31mERROR\033[0m\n");
-		ft_putstr("File does not exist\n");
-		close(ret);
-		return ;
+		ft_putstr("\033[31mread_server() error\033[0m\n");
+		exit(0);
 	}
-	while ((t = read(ret, buf, 1023)) > 0)
-	{
-		buf[t] = 0;
-		write(sock, buf, t);
-	}
-	ft_putstr("\033[32mSUCCESS\033[0m\n");
-	close(ret);
+	buf[r] = 0;
+	return (r);
 }
 
-int		main(int ac, char **av)
+void	action(int sock)
 {
-	int					port;
-	int					sock;
-	int					r;
-	char				buf[1024];
-	int					t;
-
-	if (ac != 3)
-	{
-		ft_putstr("[USAGE] - ./client [address] [port]\n");
-		return (0);
-	}
-	port = ft_atoi(av[2]);
-	sock = create_client(av[1], port);
+//	int					r;
+//	char				buf[1024];
+//	int					t;
+/*
 	while (42)
 	{
+
 		write(1, "\033[33m[client]-> \033[0m", 20);
 		r = read(0, buf, 1023);
 		buf[r - 1] = 0;
@@ -106,14 +88,66 @@ int		main(int ac, char **av)
             ft_putstr("\033[32mSUCCESS\033[0m\n");
             exit(0);
         }
-		while ((t = recv(sock, buf, sizeof(buf), 0)) > 0)
+		while ((t = recv(sock, buf, 1023, 0)) > 0)
 		{
 			buf[t] = 0;
 			if (ft_strcmp(buf, END) == 0 || (ft_strcmp(buf, "") == 0))
 				break ;
 			write(1, buf, t);
 		}
+		*/
+		char	name[] = "test";
+		char	buf[BUF_SIZE];
+		fd_set	readfd;
+		int		ret;
+		int		r;
+
+		write_server(sock, name);
+		while (42)
+		{
+			FD_ZERO(&readfd);
+			FD_SET(sock, &readfd);
+			if ((ret = select(sock + 1, &readfd, NULL, NULL, NULL)) < 0)
+			{
+				ft_putstr("\033[31mselect() problem\033[0m\n");
+				exit(0);
+			}
+			if (FD_ISSET(1, &readfd))
+			{
+				while ((r = read(1, buf, BUF_SIZE - 1)) > 0)
+				{
+					buf[r - 1] = 0;
+				}
+				write_server(sock, buf);
+			}
+			else if (FD_ISSET(sock, &readfd))
+			{
+				
+
+				r =	read_server(sock, buf);
+				if (r == 0)
+				{
+					ft_putstr("\033[31mServer disconnected\033[0m\n");
+					break ;
+				}
+				ft_putstr(buf);
+			}
+		}
+}
+
+int		main(int ac, char **av)
+{
+	int					port;
+	int					sock;
+	
+	if (ac != 3)
+	{
+		ft_putstr("[USAGE] - ./client [address] [port]\n");
+		return (0);
 	}
+	port = ft_atoi(av[2]);
+	sock = create_client(av[1], port);
+	action(sock);
 	close(sock);
 	return (0);
 }

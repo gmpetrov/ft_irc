@@ -6,7 +6,7 @@
 /*   By: gpetrov <gpetrov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/13 18:19:58 by gpetrov           #+#    #+#             */
-/*   Updated: 2014/05/17 20:45:24 by gpetrov          ###   ########.fr       */
+/*   Updated: 2014/05/20 14:52:29 by gpetrov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,12 @@
 /*
 **	MACRO
 */
-
-# define NL		"\006"
-# define END	"\007"
-# define GET	"\005"
-# define END_GET "\004"
+# define BUF_SIZE	1024
+# define MAX_CLIENT	10
+# define NL			"\006"
+# define END		"\007"
+# define GET		"\005"
+# define END_GET	"\004"
 
 # include<fcntl.h>
 # include<sys/stat.h>
@@ -45,7 +46,7 @@
 **	main.c
 */
 void	do_fork(t_data data, int sock);
-void	action(t_data *data);
+//oid	action(t_data *data);
 int		create_server(int port);
 
 /*
