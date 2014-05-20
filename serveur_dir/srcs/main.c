@@ -6,7 +6,7 @@
 /*   By: gpetrov <gpetrov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/13 18:20:57 by gpetrov           #+#    #+#             */
-/*   Updated: 2014/05/20 15:09:04 by gpetrov          ###   ########.fr       */
+/*   Updated: 2014/05/20 18:08:26 by gpetrov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,16 +70,17 @@ void	write_client(int sock, char *buf)
 void	send_to_all(t_client *clients, t_client sender, int actual, char *buf, char from_server)
 {
 	int		i;
-//	char	msg[BUF_SIZE];
+	char	msg[] = "ce ci est un petit test\n";
 //	message[0] = 0;
 	i = 0;
 
 	(void)from_server;
+	(void)buf;
 	while (i < actual)
 	{
 		if (sender.sock != clients[i].sock)
 		{
-			write_client(clients[i].sock, buf);			
+			write_client(clients[i].sock, msg);			
 		}
 		i++;
 	}
@@ -127,8 +128,8 @@ void	action(/*t_data *data*/int sock)
 		}
 		if (select(max + 1, &readfd,  NULL, NULL, NULL) == -1)
 		{
-			ft_putstr("033[31mselect() problem\033[0m\n");
-			exit (0);
+			ft_putstr("\033[31mselect() problem\033[0m\n");
+			exit(0);	
 		}
 		if (FD_ISSET(1, &readfd))
 		{
@@ -136,7 +137,7 @@ void	action(/*t_data *data*/int sock)
 		}
 		else if (FD_ISSET(sock, &readfd))
 		{
-			struct sockaddr_in	csin;
+			struct sockaddr_in	csin = { 0 };
 			socklen_t			sinsize;
 
 			sinsize = sizeof(csin);
@@ -155,6 +156,7 @@ void	action(/*t_data *data*/int sock)
 			t_client c = { cs };
 			clients[actual] = c;
 			actual++;
+			write(1, buf, ft_strlen(buf));
 		}
 		else
 		{
@@ -168,10 +170,11 @@ void	action(/*t_data *data*/int sock)
 					if (c == 0)
 					{
 						close(clients[i].sock);
-						send_to_all(clients, client, actual, "A cliens disconnected\n", 1);
+						send_to_all(clients, client, actual, "A client disconnected\n", 1);
 					}
 					else
 						send_to_all(clients, client, actual, buf, 0);
+					write(1, buf, ft_strlen(buf));
 					break ;
 				}
 				i++;
