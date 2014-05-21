@@ -6,14 +6,16 @@
 #    By: gpetrov <gpetrov@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/04/25 20:36:16 by gpetrov           #+#    #+#              #
-#    Updated: 2014/05/19 19:30:38 by gpetrov          ###   ########.fr        #
+#    Updated: 2014/05/21 21:54:50 by gpetrov          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME		= client
 NAME2		= serveur
-FILES		= main.c
-FILES2		= main.c tools.c
+FILES2		= main.c check_fd.c clean_fd.c client_read.c client_write.c \
+			  do_select.c get_opt.c init_fd.c main_loop.c init_env.c \
+			  srv_accept.c x.c srv_create.c
+FILES		= main.c tools.c read_write_server.c sock_init.c
 SRCS		= $(addprefix client_dir/srcs/, $(FILES))
 SRCS2	 	= $(addprefix serveur_dir/srcs/, $(FILES2))
 OBJS		= $(SRCS:client_dir/srcs/%.c=client_dir/.obj/%.o)
