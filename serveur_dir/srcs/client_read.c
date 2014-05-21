@@ -1,10 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client_read.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gpetrov <gpetrov@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2014/05/21 22:07:45 by gpetrov           #+#    #+#             */
+/*   Updated: 2014/05/21 22:08:26 by gpetrov          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/socket.h>
-#include "bircd.h"
-
 #include <string.h>
+#include "serveur.h"
 
 void	client_read(t_env *e, int cs)
 {
@@ -25,7 +35,7 @@ void	client_read(t_env *e, int cs)
 		{
 			if ((e->fds[i].type == FD_CLIENT) && (i != cs))
 				send(i, e->fds[cs].buf_read, r, 0);
-		i++;
+			i++;
 		}
 	}
 }

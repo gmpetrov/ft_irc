@@ -1,19 +1,30 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   srv_accept.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gpetrov <gpetrov@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2014/05/21 22:14:23 by gpetrov           #+#    #+#             */
+/*   Updated: 2014/05/21 22:15:02 by gpetrov          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include <stdio.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "bircd.h"
+#include "serveur.h"
 
 void			srv_accept(t_env *e, int s)
 {
-	int			cs;
+	int					cs;
 	struct sockaddr_in	csin;
-	socklen_t		csin_len;
+	socklen_t			csin_len;
 
 	csin_len = sizeof(csin);
 	cs = X(-1, accept(s, (struct sockaddr*)&csin, &csin_len), "accept");
 	printf("New client #%d from %s:%d\n", cs,
-	 inet_ntoa(csin.sin_addr), ntohs(csin.sin_port));
+	inet_ntoa(csin.sin_addr), ntohs(csin.sin_port));
 	clean_fd(&e->fds[cs]);
 	e->fds[cs].type = FD_CLIENT;
 	e->fds[cs].fct_read = client_read;

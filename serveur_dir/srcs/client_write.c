@@ -1,12 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client_write.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gpetrov <gpetrov@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2014/05/21 22:08:49 by gpetrov           #+#    #+#             */
+/*   Updated: 2014/05/21 22:08:59 by gpetrov          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include <sys/socket.h>
 #include <unistd.h>
-#include "bircd.h"
+#include "serveur.h"
 
 void	client_write(t_env *e, int cs)
 {
-	// (void)cs;
-	// (void)e;
 	int		i;
 	int		r;
 
