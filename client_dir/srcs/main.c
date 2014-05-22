@@ -127,7 +127,11 @@ void	input(int sock, char **login, int *chan)
 {
 	char	*line;
 
-	get_next_line(STDIN_FILENO, &line);
+	if (get_next_line(STDIN_FILENO, &line) <= 0)
+	{
+		write(1, "\n", 1);
+		return ;
+	}
 	if (ft_strncmp(line, "/nick", 5) == 0)
 		nick(sock, line, login);
 	else if (ft_strncmp(line, "/join", 5) == 0)

@@ -98,7 +98,7 @@ void	client_read(t_env *e, int cs)
 		write(1, "OK\n", 3);
 		while (i < e->maxfd)
 		{
-			if (e->fds[i].type == FD_CLIENT && (i != cs))
+			if (e->fds[i].type == FD_CLIENT && (e->fds[cs].chan == e->fds[i].chan) &&(i != cs))
 			{
 				send(cs, e->fds[i].name, ft_strlen(e->fds[i].name), 0);
 				send(cs, "\n", 1, 0);
