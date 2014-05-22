@@ -6,7 +6,7 @@
 /*   By: gpetrov <gpetrov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/13 18:17:46 by gpetrov           #+#    #+#             */
-/*   Updated: 2014/05/21 23:50:17 by gpetrov          ###   ########.fr       */
+/*   Updated: 2014/05/22 16:58:46 by wbeets           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,19 @@ void	send_id(int sock, char **login)
 {
 	char	*s1;
 	char	*s2;
+	char	*join;
 
 	s1 = ft_strdup("\033[32m[");
 	s2 = ft_strdup(*login);
-	s1 = ft_strcat(s1, s2);
-	free(s2);
-	s2 = ft_strdup("] said \033[0m\n");
-	s1 = ft_strcat(s1, s2);
-	write_server(sock, s1);
+	join = ft_strjoin(s1, s2);
 	free(s1);
 	free(s2);
+	s2 = ft_strdup("] said \033[0m\n");
+	s1 = ft_strjoin(join, s2);
+	free(join);
+	free(s2);
+	write_server(sock, s1);
+	free(s1);
 }
 
 void	input(int sock, char **login)
