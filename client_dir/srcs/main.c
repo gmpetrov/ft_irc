@@ -114,14 +114,10 @@ void	prompt(char *login)
 
 char	*joined_the_room(char *login)
 {
-	char	*s1;
-	char	*s2;
+	char	*join;
 
-	s1 = ft_strdup(login);
-	s2 = ft_strdup(" joined the room");
-	s1 = ft_strcat(s1, s2);
-	free(s2);
-	return (s1);
+	join = ft_strjoin(login, " joined the room");
+	return (join);
 }
 
 void	action(int sock, char **env)
@@ -130,10 +126,15 @@ void	action(int sock, char **env)
 	int		ret;
 	char	*name;
 	char	*join;
+	char	buf[BUF_SIZE];
 
 	name = get_name(env);
 	join = joined_the_room(name);
+	write_server(sock, name);
+	read_server(sock, buf);
+	ft_putstr(buf);
 	write_server(sock, join);
+	free(join);
 	while (42)
 	{
 		prompt(name);

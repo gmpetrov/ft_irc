@@ -17,7 +17,7 @@
 **	MACRO
 */
 # define BUF_SIZE		1024
-# define END			"\007"
+# define END_SEND		"\007"
 # define NL				"\006"
 # define GET			"\005"
 # define END_GET		"\004"

@@ -22,7 +22,7 @@ OBJS		= $(SRCS:client_dir/srcs/%.c=client_dir/.obj/%.o)
 OBJS2		= $(SRCS:serveur_dir/srcs/%.c=serveur_dir/.obj/%.o)
 INC			= -I client_dir/includes -I libft/includes
 INC2		= -I serveur_dir/includes -I libft/includes
-FLAGS		=  -Wall -Wextra -Werror
+FLAGS		=  -Wall -Wextra -Werror -g
 LIB			= -L libft -lft
 
 all: $(NAME) $(NAME2)

@@ -15,7 +15,10 @@
 
 void	write_server(int sock, char *buf)
 {
-	if (send(sock, buf, ft_strlen(buf), 0) < 0)
+	char	*to_send;
+
+	to_send = ft_strjoin(buf, END_SEND);
+	if (send(sock, to_send, ft_strlen(to_send), 0) < 0)
 	{
 		ft_putstr("\033[31msend() error\033[0m\n");
 		exit(0);
