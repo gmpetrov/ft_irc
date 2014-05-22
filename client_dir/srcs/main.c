@@ -34,23 +34,112 @@ void	send_id(int sock, char **login)
 	free(s1);
 }
 
-void	input(int sock, char **login)
+void	nick(int sock, char *line, char **login)
+{
+	char	**tab;
+	char	buf[BUF_SIZE];
+
+
+	tab = ft_strsplit(line, ' ');
+	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 9))
+	{
+		free(*login);
+		*login = ft_strdup(tab[1]);
+		write_server(sock, "/nick");
+		read_server(sock, buf);
+		write_server(sock, *login);
+	}
+	else
+		write(1, "\033[31mWrong argument\033[0m\n", 24);
+	free_tab(&tab);
+}
+
+int 	string_is_nb(char *str)
+{
+	int 	i;
+
+	i = 0;
+	while (str[i] != 0)
+	{
+		if (!ft_isdigit(str[i]))
+			return (-1);
+		i++;
+	}
+	return (0);	
+}
+
+void	join(int sock, char *line, int *chan)
+{
+	char	**tab;
+	char	buf[BUF_SIZE];
+
+	tab = ft_strsplit(line, ' ');
+	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 6) && (string_is_nb(tab[1])) == 0)
+	{
+		write_server(sock, "/join");
+		read_server(sock, buf);
+		write_server(sock, tab[1]);
+		*chan = ft_atoi(tab[1]);
+	}
+	else
+		write(1, "\033[31mWrong argument\033[0m\n", 24);
+	free_tab(&tab);
+}
+
+void	leave(int sock, char *line, int *chan)
+{
+	char	**tab;
+	char 	buf[BUF_SIZE];
+
+	tab = ft_strsplit(line, ' ');
+	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 6) && (string_is_nb(tab[1])) == 0 && (ft_atoi(tab[1]) == *chan))
+	{
+		write_server(sock, "/leave");
+		read_server(sock, buf);
+		write_server(sock, tab[1]);
+		*chan = DEF_CHAN;
+	}
+	else
+		write(1, "\033[31mWrong argument\033[0m\n", 24);
+	free_tab(&tab);
+}
+
+void	msg(int sock, char *line)
+{
+	char	**tab;
+	char	buf[BUF_SIZE];
+
+	tab = ft_strsplit(line, ' ');
+	if (tab[1] && tab[2])
+	{
+		write_server(sock, "/msg");
+		read_server(sock, buf);
+		write_server(sock, tab[1]);
+		read_server(sock, buf);
+		write_server(sock, tab[2]);
+	}
+	else
+		write(1, "\033[31mWrong argument\033[0m\n", 24);
+	free_tab(&tab);
+}
+
+void	input(int sock, char **login, int *chan)
 {
 	char	*line;
-	char	**tab;
 
 	get_next_line(STDIN_FILENO, &line);
 	if (ft_strncmp(line, "/nick", 5) == 0)
+		nick(sock, line, login);
+	else if (ft_strncmp(line, "/join", 5) == 0)
+		join(sock, line, chan);
+	else if (ft_strncmp(line, "/leave", 6) == 0)
+		leave(sock, line, chan);
+	else if (ft_strncmp(line, "/msg", 4) == 0)
+		msg(sock, line);
+	else if (ft_strcmp(line, "") == 0)
 	{
-		tab = ft_strsplit(line, ' ');
-		if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 9))
-		{
-			free(*login);
-			*login = ft_strdup(tab[1]);
-		}
-		else
-			write(1, "\033[31mWrong argument\033[0m\n", 24);
-		free_tab(&tab);
+		free(line);
+		return ;
 	}
 	else
 	{
@@ -130,7 +219,9 @@ void	action(int sock, char **env)
 	char	*name;
 	char	*join;
 	char	buf[BUF_SIZE];
+	int 	chan;
 
+	chan = DEF_CHAN;
 	name = get_name(env);
 	join = joined_the_room(name);
 	write_server(sock, name);
@@ -147,7 +238,7 @@ void	action(int sock, char **env)
 		if ((ret = select(sock + 1, &readfd, NULL, NULL, NULL)) < 0)
 			error_exit("select() problem");
 		if (FD_ISSET(STDIN_FILENO, &readfd))
-			input(sock, &name);
+			input(sock, &name, &chan);
 		else if (FD_ISSET(sock, &readfd))
 		{
 			if (output(sock) == -1)

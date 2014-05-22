@@ -20,6 +20,7 @@
 # define FD_SERV	1
 # define FD_CLIENT	2
 # define END_SEND	"\007"
+# define DEF_CHAN	0;
 
 # define BUF_SIZE	4096
 

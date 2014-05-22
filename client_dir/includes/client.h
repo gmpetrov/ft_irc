@@ -21,6 +21,7 @@
 # define NL				"\006"
 # define GET			"\005"
 # define END_GET		"\004"
+# define DEF_CHAN		0
 
 # include "libft.h"
 
@@ -43,7 +44,7 @@ void	write_server(int sock, char *buf);
 **	main.c
 */
 int		output(int sock);
-void	input(int sock, char **login);
+void	input(int sock, char **login, int *chan);
 int		create_client(char *addr, int port);
 void	action(int sock, char **env);
 

@@ -19,7 +19,7 @@ void	main_loop(t_env *e)
 	i = 0;
 	while (i < e->maxfd)
 	{
-		e->fds[i].chan = -1;
+		e->fds[i].chan = DEF_CHAN;
 		e->fds[i].first = 0;
 		e->fds[i].name = NULL;
 		i++;	
