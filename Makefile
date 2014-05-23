@@ -13,9 +13,10 @@
 NAME		= client
 NAME2		= serveur
 FILES2		= main.c check_fd.c clean_fd.c client_read.c client_write.c \
-			  do_select.c get_opt.c init_fd.c main_loop.c init_env.c \
-			  srv_accept.c x.c srv_create.c cmd.c
-FILES		= main.c tools.c read_write_server.c sock_init.c
+			  	do_select.c get_opt.c init_fd.c main_loop.c init_env.c \
+			  	srv_accept.c x.c srv_create.c cmd.c
+FILES		= main.c tools.c read_write_server.c sock_init.c cmd_client.c \
+				tools2.c
 SRCS		= $(addprefix client_dir/srcs/, $(FILES))
 SRCS2	 	= $(addprefix serveur_dir/srcs/, $(FILES2))
 OBJS		= $(SRCS:client_dir/srcs/%.c=client_dir/.obj/%.o)

@@ -6,7 +6,7 @@
 /*   By: gpetrov <gpetrov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/13 18:17:46 by gpetrov           #+#    #+#             */
-/*   Updated: 2014/05/22 20:38:05 by gpetrov          ###   ########.fr       */
+/*   Updated: 2014/05/23 20:40:24 by gpetrov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,121 +14,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "client.h"
-
-void	send_id(int sock, char **login)
-{
-	char	*s1;
-	char	*s2;
-	char	*join;
-
-	s1 = ft_strdup("\033[32m[");
-	s2 = ft_strdup(*login);
-	join = ft_strjoin(s1, s2);
-	free(s1);
-	free(s2);
-	s2 = ft_strdup("] said \033[0m\n");
-	s1 = ft_strjoin(join, s2);
-	free(join);
-	free(s2);
-	write_server(sock, s1);
-	free(s1);
-}
-
-void	nick(int sock, char *line, char **login)
-{
-	char	**tab;
-
-	tab = ft_strsplit(line, ' ');
-	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 9))
-	{
-		free(*login);
-		*login = ft_strdup(tab[1]);
-		write_server(sock, line);
-	}
-	else
-		write(1, "\033[31mWrong argument\033[0m\n", 24);
-	free_tab(&tab);
-}
-
-int 	string_is_nb(char *str)
-{
-	int 	i;
-
-	i = 0;
-	while (str[i] != 0)
-	{
-		if (!ft_isdigit(str[i]))
-			return (-1);
-		i++;
-	}
-	return (0);	
-}
-
-void	join(int sock, char *line, int *chan)
-{
-	char	**tab;
-
-	tab = ft_strsplit(line, ' ');
-	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 6) &&
-		(string_is_nb(tab[1])) == 0)
-	{
-		write_server(sock, line);
-		*chan = ft_atoi(tab[1]);
-	}
-	else
-		write(1, "\033[31mWrong argument\033[0m\n", 24);
-	free_tab(&tab);
-}
-
-void	leave(int sock, char *line, int *chan)
-{
-	char	**tab;
-
-	tab = ft_strsplit(line, ' ');
-	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 6) &&
-		(string_is_nb(tab[1])) == 0 && (ft_atoi(tab[1]) == *chan))
-	{
-		write_server(sock, line);
-		*chan = DEF_CHAN;
-	}
-	else
-		write(1, "\033[31mWrong argument\033[0m\n", 24);
-	free_tab(&tab);
-}
-
-char	*join_row(char **tab, int start)
-{
-	char	*swap;
-
-	int 	i;
-
-	i = start;
-	if (tab[i + 1])
-		swap = ft_strjoin(tab[i], tab[i + 1]);
-	i++;
-	while (tab[i])
-	{
-		if (tab[i + 1])
-		{
-			swap = ft_strjoin(swap, " ");
-			swap = ft_strjoin(swap, tab[i + 1]);
-		}
-		i++;
-	}
-	return (swap);
-}
-
-void	msg(int sock, char *line)
-{
-	char	**tab;
-
-	tab = ft_strsplit(line, ' ');
-	if (tab[1] && tab[2])
-		write_server(sock, line);
-	else
-		write(1, "\033[31mWrong argument\033[0m\n", 24);
-	free_tab(&tab);
-}
 
 void	input(int sock, char **login, int *chan)
 {
@@ -174,52 +59,6 @@ int		output(int sock)
 	return (0);
 }
 
-char	*get_name(char **env)
-{
-	int		i;
-	int		j;
-	int		k;
-	char	*login;
-
-	i = 0;
-	k = 0;
-	while (env[i])
-	{
-		if (strncmp(env[i], "LOGNAME", 7) == 0)
-		{
-			j = 8;
-			login = (char *)malloc(sizeof(char) * ft_strlen(env[i]));
-			while (env[i][j] != 0)
-			{
-				login[k] = env[i][j];
-				k++;
-				j++;
-			}
-			login[k] = 0;
-			return (login);
-		}
-		i++;
-	}
-	return ("Default");
-}
-
-void	prompt(char *login)
-{
-	ft_putstr("\033[33m");
-	ft_putstr("[");
-	ft_putstr(login);
-	ft_putstr("]");
-	ft_putstr("-> \033[0m");
-}
-
-char	*joined_the_room(char *login)
-{
-	char	*join;
-
-	join = ft_strjoin(login, " joined the room");
-	return (join);
-}
-
 void	init_action(int sock, char *name)
 {
 	char	*join;
@@ -238,7 +77,7 @@ void	action(int sock, char **env)
 	fd_set	readfd;
 	int		ret;
 	char	*name;
-	int 	chan;
+	int		chan;
 
 	chan = DEF_CHAN;
 	name = get_name(env);
