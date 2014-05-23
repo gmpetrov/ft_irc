@@ -37,7 +37,6 @@ void	send_id(int sock, char **login)
 void	nick(int sock, char *line, char **login)
 {
 	char	**tab;
-	// char	*join;
 
 	tab = ft_strsplit(line, ' ');
 	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 9))
@@ -45,7 +44,6 @@ void	nick(int sock, char *line, char **login)
 		free(*login);
 		*login = ft_strdup(tab[1]);
 		write_server(sock, line);
-		// write_server(sock, *login);
 	}
 	else
 		write(1, "\033[31mWrong argument\033[0m\n", 24);
@@ -69,10 +67,10 @@ int 	string_is_nb(char *str)
 void	join(int sock, char *line, int *chan)
 {
 	char	**tab;
-	// char	buf[BUF_SIZE];
 
 	tab = ft_strsplit(line, ' ');
-	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 6) && (string_is_nb(tab[1])) == 0)
+	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 6) &&
+		(string_is_nb(tab[1])) == 0)
 	{
 		write_server(sock, line);
 		*chan = ft_atoi(tab[1]);
@@ -85,14 +83,12 @@ void	join(int sock, char *line, int *chan)
 void	leave(int sock, char *line, int *chan)
 {
 	char	**tab;
-	// char 	buf[BUF_SIZE];
 
 	tab = ft_strsplit(line, ' ');
-	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 6) && (string_is_nb(tab[1])) == 0 && (ft_atoi(tab[1]) == *chan))
+	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 6) &&
+		(string_is_nb(tab[1])) == 0 && (ft_atoi(tab[1]) == *chan))
 	{
-		write_server(sock, "/leave");
-		// read_server(sock, buf);
-		write_server(sock, tab[1]);
+		write_server(sock, line);
 		*chan = DEF_CHAN;
 	}
 	else
@@ -224,23 +220,29 @@ char	*joined_the_room(char *login)
 	return (join);
 }
 
-void	action(int sock, char **env)
+void	init_action(int sock, char *name)
 {
-	fd_set	readfd;
-	int		ret;
-	char	*name;
 	char	*join;
 	char	buf[BUF_SIZE];
-	int 	chan;
 
-	chan = DEF_CHAN;
-	name = get_name(env);
 	join = joined_the_room(name);
 	write_server(sock, name);
 	read_server(sock, buf);
 	ft_putstr(buf);
 	write_server(sock, join);
 	free(join);
+}
+
+void	action(int sock, char **env)
+{
+	fd_set	readfd;
+	int		ret;
+	char	*name;
+	int 	chan;
+
+	chan = DEF_CHAN;
+	name = get_name(env);
+	init_action(sock, name);
 	while (42)
 	{
 		prompt(name);

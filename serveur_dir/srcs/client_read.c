@@ -109,8 +109,10 @@ void	cmd_msg(t_env *e, int cs)
 		nick = ft_strdup(tab[1]);
 	while (i < e->maxfd)
 	{
-		if (e->fds[i].type == FD_CLIENT && (ft_strcmp(nick, e->fds[i].name) == 0) && (i != cs))
-			send(i, e->fds[cs].buf_read + 6 + ft_strlen(nick), ft_strlen(e->fds[cs].buf_read), 0);
+		if (e->fds[i].type == FD_CLIENT &&
+			(ft_strcmp(nick, e->fds[i].name) == 0) && (i != cs))
+			send(i, e->fds[cs].buf_read + 6 + ft_strlen(nick),
+				ft_strlen(e->fds[cs].buf_read), 0);
 		i++;
 	}
 }
@@ -125,7 +127,8 @@ void	cmd_who(t_env *e, int cs)
 	e->fds[cs].buf_read[r] = 0;
 	while (i < e->maxfd)
 	{
-		if (e->fds[i].type == FD_CLIENT && (e->fds[cs].chan == e->fds[i].chan) &&(i != cs))
+		if (e->fds[i].type == FD_CLIENT &&
+			(e->fds[cs].chan == e->fds[i].chan) &&(i != cs))
 		{
 			send(cs, e->fds[i].name, ft_strlen(e->fds[i].name), 0);
 			send(cs, "\n", 1, 0);
