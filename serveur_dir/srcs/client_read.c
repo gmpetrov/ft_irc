@@ -34,10 +34,11 @@ void	client_read(t_env *e, int cs)
 {
 	int	r;
 	int	i;
-	char *nick;
+	char	tmp[BUF_SIZE];
+	// char *nick;
 
 	i = 0;
-	r = recv(cs, e->fds[cs].buf_read, BUF_SIZE, 0);
+	r = recv(cs, e->fds[cs].buf_read, BUF_SIZE, MSG_PEEK);
 	e->fds[cs].buf_read[r] = 0;
 	ft_putstr(e->fds[cs].buf_read);
 	write(1, "\n", 1);
@@ -55,30 +56,33 @@ void	client_read(t_env *e, int cs)
 	}
 	else if (ft_strstr(e->fds[cs].buf_read, "/nick") != NULL)
 	{
-		send(cs, "OK\n", 3, 0);
 		free(e->fds[cs].name);
-		r = recv(cs, e->fds[cs].buf_read, BUF_SIZE, 0);
+		recv(cs, tmp, 5, 0);
+		r = recv(cs, e->fds[cs].buf_read, r, 0);
 		e->fds[cs].buf_read[r] = 0;
 		e->fds[cs].name	= ft_strdup(e->fds[cs].buf_read);
 	}
 	else if (ft_strstr(e->fds[cs].buf_read, "/join") != NULL)
 	{
-		send(cs, "OK\n", 3, 0);
+		r = recv(cs, tmp, 5, 0);
 		ft_bzero(e->fds[cs].buf_read, BUF_SIZE);
-		r = recv(cs, e->fds[cs].buf_read, BUF_SIZE, 0);
+		r = recv(cs, e->fds[cs].buf_read, r, 0);
 		e->fds[cs].buf_read[r] = 0;
+		ft_putstr(e->fds[cs].buf_read);
 		e->fds[cs].chan = ft_atoi(e->fds[cs].buf_read);
 	}
 	else if (ft_strstr(e->fds[cs].buf_read, "/leave") != NULL)
 	{
-		send(cs, "OK\n", 3, 0);
-		r = recv(cs, e->fds[cs].buf_read, BUF_SIZE, 0);
+		// send(cs, "OK\n", 3, 0);
+		recv(cs, tmp, 6, 0);
+		r = recv(cs, e->fds[cs].buf_read, r, 0);
 		e->fds[cs].buf_read[r] = 0;
 		e->fds[cs].chan = DEF_CHAN;
-	}
+	}/*
 	else if (ft_strstr(e->fds[cs].buf_read, "/msg") != NULL)
 	{
-		send(cs, "OK\n", 3, 0);
+		// send(cs, "OK\n", 3, 0);
+		recv(cs, tmp, 4, 0);
 		r = recv(cs, e->fds[cs].buf_read, BUF_SIZE, 0);
 		e->fds[cs].buf_read[r] = 0;
 		nick = ft_strdup(e->fds[cs].buf_read);
@@ -105,17 +109,18 @@ void	client_read(t_env *e, int cs)
 			}
 			i++;
 		}
-	}
+	}*/
 	else
 	{
+		r = recv(cs, e->fds[cs].buf_write, r, 0);
 		// buf_copy(e, r, cs);
-		i = 0;
-		while (i < e->maxfd)
-		{
-			if ((e->fds[i].type == FD_CLIENT) && (e->fds[i].chan == e->fds[cs].chan) && (i != cs))
-				send(i, e->fds[cs].buf_read, r, 0);
-			i++;
-		}
+		// i = 0;
+		// while (i < e->maxfd)
+		// {
+		// 	if ((e->fds[i].type == FD_CLIENT) && (e->fds[i].chan == e->fds[cs].chan) && (i != cs))
+		// 		send(i, e->fds[cs].buf_read, r, 0);
+		// 	i++;
+		// }
 	}
 	ft_bzero(e->fds[cs].buf_read, BUF_SIZE);
 }

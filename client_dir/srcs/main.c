@@ -37,16 +37,21 @@ void	send_id(int sock, char **login)
 void	nick(int sock, char *line, char **login)
 {
 	char	**tab;
-	char	buf[BUF_SIZE];
+	// char	buf[BUF_SIZE];
 
 
 	tab = ft_strsplit(line, ' ');
 	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 9))
 	{
+		// free(*login);
+		// *login = ft_strdup(tab[1]);
+		// write_server(sock, "/nick");
+		// read_server(sock, buf);
+		// write_server(sock, *login);
 		free(*login);
 		*login = ft_strdup(tab[1]);
 		write_server(sock, "/nick");
-		read_server(sock, buf);
+		// read_server(sock, buf);
 		write_server(sock, *login);
 	}
 	else
@@ -71,13 +76,12 @@ int 	string_is_nb(char *str)
 void	join(int sock, char *line, int *chan)
 {
 	char	**tab;
-	char	buf[BUF_SIZE];
+	// char	buf[BUF_SIZE];
 
 	tab = ft_strsplit(line, ' ');
 	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 6) && (string_is_nb(tab[1])) == 0)
 	{
 		write_server(sock, "/join");
-		read_server(sock, buf);
 		write_server(sock, tab[1]);
 		*chan = ft_atoi(tab[1]);
 	}
@@ -89,13 +93,13 @@ void	join(int sock, char *line, int *chan)
 void	leave(int sock, char *line, int *chan)
 {
 	char	**tab;
-	char 	buf[BUF_SIZE];
+	// char 	buf[BUF_SIZE];
 
 	tab = ft_strsplit(line, ' ');
 	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 6) && (string_is_nb(tab[1])) == 0 && (ft_atoi(tab[1]) == *chan))
 	{
 		write_server(sock, "/leave");
-		read_server(sock, buf);
+		// read_server(sock, buf);
 		write_server(sock, tab[1]);
 		*chan = DEF_CHAN;
 	}
@@ -114,7 +118,9 @@ void	msg(int sock, char *line)
 	{
 		write_server(sock, "/msg");
 		read_server(sock, buf);
+		write_server(sock, "|");
 		write_server(sock, tab[1]);
+		write_server(sock, "|");
 		read_server(sock, buf);
 		write_server(sock, tab[2]);
 	}
@@ -146,8 +152,7 @@ void	input(int sock, char **login, int *chan)
 		return ;
 	}
 	else
-	{
-		send_id(sock, login);
+	{		// send_id(sock, login);
 		write_server(sock, line);
 	}
 	free(line);

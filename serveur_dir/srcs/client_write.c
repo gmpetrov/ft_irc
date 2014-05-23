@@ -11,21 +11,38 @@
 /* ************************************************************************** */
 
 #include <sys/socket.h>
+#include <stdio.h>
 #include <unistd.h>
 #include "serveur.h"
 
 void	client_write(t_env *e, int cs)
 {
 	int		i;
+	char	*s1;
+	char	*s2;
+	char	*join;
 
 	i = 0;
+	s1 = ft_strdup("\033[32m[");
+	s2 = ft_strdup(e->fds[cs].name);
+	join = ft_strjoin(s1, s2);
+	free(s1);
+	free(s2);
+	s2 = ft_strdup("] said ->\033[0m ");
+	s1 = ft_strjoin(join, s2);
+	free(join);
+	free(s2);
 	// r = recv(cs, e->fds[cs].buf_write, BUF_SIZE, 0);
 	// write(1, "fuck fuck duck\n", 15);
 	while (i < e->maxfd)
 	{
-		if ((e->fds[i].type == FD_CLIENT) && (i != cs))
+		if ((e->fds[i].type == FD_CLIENT) && (e->fds[i].chan == e->fds[cs].chan) && (i != cs))
+		{
+			send(i, s1, ft_strlen(s1), 0);
 			send(i, e->fds[cs].buf_write, ft_strlen(e->fds[cs].buf_write), 0);
+		}
 		i++;
 	}
 	ft_bzero(e->fds[cs].buf_write, BUF_SIZE);
+	free(s1);
 }
