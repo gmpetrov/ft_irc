@@ -33,11 +33,10 @@ void	client_write(t_env *e, int cs)
 	free(join);
 	free(s2);
 	s1 = ft_strjoin(s1, e->fds[cs].buf_write);
-	// r = recv(cs, e->fds[cs].buf_write, BUF_SIZE, 0);
-	// write(1, "fuck fuck duck\n", 15);
 	while (i < e->maxfd)
 	{
-		if ((e->fds[i].type == FD_CLIENT) && (e->fds[i].chan == e->fds[cs].chan) && (i != cs))
+		if ((e->fds[i].type == FD_CLIENT) &&
+			(e->fds[i].chan == e->fds[cs].chan) && (i != cs))
 			send(i, s1, ft_strlen(s1), 0);
 		i++;
 	}

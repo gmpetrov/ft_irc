@@ -20,10 +20,10 @@ void			srv_create(t_env *e, int port)
 	int					s;
 	struct sockaddr_in	sin;
 	struct protoent		*pe;
-	int					val;	
+	int					val;
 
 	val = 1;
-	pe = (struct protoent*)Xv(NULL, getprotobyname("tcp"), "getprotobyname");
+	pe = (struct protoent*)XV(NULL, getprotobyname("tcp"), "getprotobyname");
 	s = X(-1, socket(PF_INET, SOCK_STREAM, pe->p_proto), "socket");
 	sin.sin_family = AF_INET;
 	sin.sin_addr.s_addr = INADDR_ANY;

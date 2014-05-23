@@ -22,7 +22,7 @@ void	main_loop(t_env *e)
 		e->fds[i].chan = DEF_CHAN;
 		e->fds[i].first = 0;
 		e->fds[i].name = NULL;
-		i++;	
+		i++;
 	}
 	while (1)
 	{
