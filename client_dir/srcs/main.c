@@ -125,7 +125,6 @@ char	*join_row(char **tab, int start)
 void	msg(int sock, char *line)
 {
 	char	**tab;
-	// char	buf[BUF_SIZE];
 
 	tab = ft_strsplit(line, ' ');
 	if (tab[1] && tab[2])
@@ -158,9 +157,7 @@ void	input(int sock, char **login, int *chan)
 		return ;
 	}
 	else
-	{		// send_id(sock, login);
 		write_server(sock, line);
-	}
 	free(line);
 }
 
