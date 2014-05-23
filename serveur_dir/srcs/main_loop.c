@@ -6,7 +6,7 @@
 /*   By: gpetrov <gpetrov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2014/05/21 22:13:57 by gpetrov           #+#    #+#             */
-/*   Updated: 2014/05/21 22:14:03 by gpetrov          ###   ########.fr       */
+/*   Updated: 2014/05/23 20:25:24 by gpetrov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	main_loop(t_env *e)
 {
-	int 	i;
+	int	i;
 
 	i = 0;
 	while (i < e->maxfd)
