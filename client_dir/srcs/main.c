@@ -37,22 +37,15 @@ void	send_id(int sock, char **login)
 void	nick(int sock, char *line, char **login)
 {
 	char	**tab;
-	// char	buf[BUF_SIZE];
-
+	// char	*join;
 
 	tab = ft_strsplit(line, ' ');
 	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 9))
 	{
-		// free(*login);
-		// *login = ft_strdup(tab[1]);
-		// write_server(sock, "/nick");
-		// read_server(sock, buf);
-		// write_server(sock, *login);
 		free(*login);
 		*login = ft_strdup(tab[1]);
-		write_server(sock, "/nick");
-		// read_server(sock, buf);
-		write_server(sock, *login);
+		write_server(sock, line);
+		// write_server(sock, *login);
 	}
 	else
 		write(1, "\033[31mWrong argument\033[0m\n", 24);
@@ -81,8 +74,7 @@ void	join(int sock, char *line, int *chan)
 	tab = ft_strsplit(line, ' ');
 	if (tab[1] && !tab[2] && (ft_strlen(tab[1]) <= 6) && (string_is_nb(tab[1])) == 0)
 	{
-		write_server(sock, "/join");
-		write_server(sock, tab[1]);
+		write_server(sock, line);
 		*chan = ft_atoi(tab[1]);
 	}
 	else
@@ -108,22 +100,36 @@ void	leave(int sock, char *line, int *chan)
 	free_tab(&tab);
 }
 
+char	*join_row(char **tab, int start)
+{
+	char	*swap;
+
+	int 	i;
+
+	i = start;
+	if (tab[i + 1])
+		swap = ft_strjoin(tab[i], tab[i + 1]);
+	i++;
+	while (tab[i])
+	{
+		if (tab[i + 1])
+		{
+			swap = ft_strjoin(swap, " ");
+			swap = ft_strjoin(swap, tab[i + 1]);
+		}
+		i++;
+	}
+	return (swap);
+}
+
 void	msg(int sock, char *line)
 {
 	char	**tab;
-	char	buf[BUF_SIZE];
+	// char	buf[BUF_SIZE];
 
 	tab = ft_strsplit(line, ' ');
 	if (tab[1] && tab[2])
-	{
-		write_server(sock, "/msg");
-		read_server(sock, buf);
-		write_server(sock, "|");
-		write_server(sock, tab[1]);
-		write_server(sock, "|");
-		read_server(sock, buf);
-		write_server(sock, tab[2]);
-	}
+		write_server(sock, line);
 	else
 		write(1, "\033[31mWrong argument\033[0m\n", 24);
 	free_tab(&tab);

@@ -30,12 +30,23 @@ void	buf_copy(t_env *e, int r, int cs)
 	ft_bzero(e->fds[cs].buf_read, BUF_SIZE);
 }
 
+int		count_row(char **tab)
+{
+	int		i;
+
+	i = 0;
+	while (tab[i])
+		i++;
+	return (i);
+}
+
 void	client_read(t_env *e, int cs)
 {
-	int	r;
-	int	i;
-	char	tmp[BUF_SIZE];
-	// char *nick;
+	int		r;
+	int		i;
+	// char	tmp[BUF_SIZE];
+	char	**tab;
+	char 	*nick;
 
 	i = 0;
 	r = recv(cs, e->fds[cs].buf_read, BUF_SIZE, MSG_PEEK);
@@ -57,46 +68,42 @@ void	client_read(t_env *e, int cs)
 	else if (ft_strstr(e->fds[cs].buf_read, "/nick") != NULL)
 	{
 		free(e->fds[cs].name);
-		recv(cs, tmp, 5, 0);
 		r = recv(cs, e->fds[cs].buf_read, r, 0);
 		e->fds[cs].buf_read[r] = 0;
-		e->fds[cs].name	= ft_strdup(e->fds[cs].buf_read);
+		tab = ft_strsplit(e->fds[cs].buf_read, ' ');
+		if (tab[1])
+			e->fds[cs].name	= ft_strdup(tab[1]);
 	}
 	else if (ft_strstr(e->fds[cs].buf_read, "/join") != NULL)
 	{
-		r = recv(cs, tmp, 5, 0);
-		ft_bzero(e->fds[cs].buf_read, BUF_SIZE);
-		r = recv(cs, e->fds[cs].buf_read, r, 0);
+		r = recv(cs, e->fds[cs].buf_read, BUF_SIZE, 0);
 		e->fds[cs].buf_read[r] = 0;
-		ft_putstr(e->fds[cs].buf_read);
-		e->fds[cs].chan = ft_atoi(e->fds[cs].buf_read);
+		tab = ft_strsplit(e->fds[cs].buf_read, ' ');
+		if (tab[1])
+			e->fds[cs].chan = ft_atoi(tab[1]);
 	}
 	else if (ft_strstr(e->fds[cs].buf_read, "/leave") != NULL)
 	{
-		// send(cs, "OK\n", 3, 0);
-		recv(cs, tmp, 6, 0);
 		r = recv(cs, e->fds[cs].buf_read, r, 0);
 		e->fds[cs].buf_read[r] = 0;
 		e->fds[cs].chan = DEF_CHAN;
-	}/*
+	}
 	else if (ft_strstr(e->fds[cs].buf_read, "/msg") != NULL)
 	{
-		// send(cs, "OK\n", 3, 0);
-		recv(cs, tmp, 4, 0);
 		r = recv(cs, e->fds[cs].buf_read, BUF_SIZE, 0);
 		e->fds[cs].buf_read[r] = 0;
-		nick = ft_strdup(e->fds[cs].buf_read);
-		send(cs, "OK\n", 3, 0);
-		r = recv(cs, e->fds[cs].buf_read, BUF_SIZE, 0);
-		e->fds[cs].buf_read[r] = 0;
-		ft_putstr("TEST\n");
+		tab = ft_strsplit(e->fds[cs].buf_read, ' ');
+		if (count_row(tab) < 3)
+			return ;
+		if (tab[1])
+			nick = ft_strdup(tab[1]);
 		while (i < e->maxfd)
 		{
 			if (e->fds[i].type == FD_CLIENT && (ft_strcmp(nick, e->fds[i].name) == 0) && (i != cs))
-				send(i, e->fds[cs].buf_read, r, 0);
+				send(i, e->fds[cs].buf_read + 6 + ft_strlen(nick), ft_strlen(e->fds[cs].buf_read), 0);
 			i++;
 		}
-	}
+	}/*
 	else if (ft_strstr(e->fds[cs].buf_read, "/who") != NULL)
 	{
 		write(1, "OK\n", 3);
